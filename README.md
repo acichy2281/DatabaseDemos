@@ -2,7 +2,7 @@
 
 ## Author
 
-
+Andrew Cichy
 
 ## Description
 
@@ -146,8 +146,9 @@ The following Bootstrap documentation should help you figure out how to add some
 
 ## Outside Resources Used
 
-
+None really, I relied on the inclass for this
 
 ## Known Problems, Issues, And/Or Errors in the Program
 
+Entering a duplicate ID for adding will cause an exception. Entering an unidentified route in the search bar goes to an unknown page.
 

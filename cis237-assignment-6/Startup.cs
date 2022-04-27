@@ -1,3 +1,7 @@
+// Author: Andrew Cichy
+// Class: CIS237
+// Date: 4/27/22
+
 using cis237_assignment_6.Data;
 using cis237_assignment_6.Models;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +49,15 @@ namespace cis237_assignment_6
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             });
+            // Configure the session
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +81,8 @@ namespace cis237_assignment_6
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

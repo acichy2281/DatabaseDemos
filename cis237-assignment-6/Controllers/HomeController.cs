@@ -1,4 +1,7 @@
-﻿using cis237_assignment_6.Models;
+﻿// Author: Andrew Cichy
+// Class: CIS237
+// Date: 4/27/22
+using cis237_assignment_6.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,6 +27,10 @@ namespace cis237_assignment_6.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        public IActionResult Contact()
         {
             return View();
         }

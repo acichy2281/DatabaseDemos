@@ -4,7 +4,45 @@
     ViewData["Title"] = "Index";
 }
 
+@*// Author: Andrew Cichy
+    // Class: CIS237
+    // Date: 4/27/22
+*@
 <h1>Index</h1>
+
+<div class="form-group">
+    <fieldset>
+        <legend>Search Filter</legend>
+        @*Open up a form that will go to the Filter Method on the
+            Beverages Controller with a POST request*@
+        @using (
+     Html.BeginForm(
+         "Filter", //Action method to run
+         "Beverages", // Controller that method is on
+         FormMethod.Post // The Request type
+     )
+ )
+        {
+            @* Render out the AntiForgery Token for the form *@
+            @Html.AntiForgeryToken()
+
+            <label for="name">Name</label>
+            @Html.TextBox("name", ViewData["filteredName"])
+            <label for="Pack">Pack</label>
+            @Html.TextBox("pack", ViewData["filteredPack"])
+            <label for="min">Min</label>
+            @Html.TextBox("min", ViewData["filteredMin"])
+            <label for="max">Max</label>
+            @Html.TextBox("max", ViewData["filteredMax"])
+
+            <input type="submit"
+                   value="Filter"
+                   class="btn btn-info pull-right" />
+        }
+    </fieldset>
+</div>
+<br />
+<br />
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -28,26 +66,27 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pack)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Active)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pack)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Active)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

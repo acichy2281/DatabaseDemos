@@ -1,7 +1,11 @@
-﻿using System;
+﻿// Author: Andrew Cichy
+// Class: CIS237
+// Date: 4/27/22
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +27,62 @@ namespace cis237_assignment_6.Controllers
         // GET: Beverages
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Beverages.ToListAsync());
+            //return View(await _context.Beverages.ToListAsync());
+            // Setup a variable to hold the beverages data
+            DbSet<Beverage> BeveragesToFilter = _context.Beverages;
+
+            // Setup some strings to hold the data that might be in
+            // the session. If there is nothing in the session
+            // we can still use these variables as a default.
+            string filterName = "";
+            string filterPack = "";
+            string filterMin = "";
+            string filterMax = "";
+            // Define a min and max for the cylinders
+            int min = -10000;
+            int max = 16000;
+
+            // Check to see if there is a vaule in the session and if there is, assing it to the variable that we setup to hold the value
+            if (!String.IsNullOrWhiteSpace(
+                HttpContext.Session.GetString("session_name")
+                ))
+            {
+                filterName = HttpContext.Session.GetString("session_name");
+            }
+            if (!String.IsNullOrWhiteSpace(
+                HttpContext.Session.GetString("session_pack")
+                ))
+            {
+                filterPack = HttpContext.Session.GetString("session_pack");
+            }
+            if (!String.IsNullOrWhiteSpace(
+                HttpContext.Session.GetString("session_min")
+                ))
+            {
+                filterMin = HttpContext.Session.GetString("session_min");
+                min = Int32.Parse(filterMin);
+            }
+            if (!String.IsNullOrWhiteSpace(
+                HttpContext.Session.GetString("session_max")
+                ))
+            {
+                filterMax = HttpContext.Session.GetString("session_max");
+                max = Int32.Parse(filterMax);
+            }
+
+            IList<Beverage> finalFiltered = await BeveragesToFilter.Where(
+                beverage => beverage.Price >= min &&
+                beverage.Price <= max &&
+                beverage.Name.Contains(filterName) &&
+                beverage.Pack.Contains(filterPack)
+            ).ToListAsync();
+
+            ViewData["filteredName"] = filterName;
+            ViewData["filteredpack"] = filterPack;
+            ViewData["filteredMin"] = filterMin;
+            ViewData["filteredMax"] = filterMax;
+
+            return View(finalFiltered);
         }
 
         // GET: Beverages/Details/5
@@ -143,6 +202,30 @@ namespace cis237_assignment_6.Controllers
             var beverage = await _context.Beverages.FindAsync(id);
             _context.Beverages.Remove(beverage);
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        // Filter method to filter the beverage list based off a given parameter
+        public IActionResult Filter()
+        {
+            // Get the form data that we sent out of the request object
+            // The string that is used as a key to get the data matches 
+            // the name propert of the form control
+            string name = HttpContext.Request.Form["name"];
+            string pack = HttpContext.Request.Form["pack"];
+            string min = HttpContext.Request.Form["min"];
+            string max = HttpContext.Request.Form["max"];
+
+            // Now that we have the data pulled out from the the
+            // Request object, let's put it into the session 
+            // so that other methods can have access to it
+            HttpContext.Session.SetString("session_name", name);
+            HttpContext.Session.SetString("session_pack", pack);
+            HttpContext.Session.SetString("session_min", min);
+            HttpContext.Session.SetString("session_max", max);
+
             return RedirectToAction(nameof(Index));
         }
 
